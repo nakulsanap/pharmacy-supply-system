@@ -4,26 +4,44 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-import com.cognizant.medicalrepresentativeschedule.exception.TokenValidationFailedException;
+import com.cognizant.medicalrepresentativeschedule.exception.InvalidDateException;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This class contain methods related to Date
+ *
+ */
 @Slf4j
 public class DateUtil {
 
-	
-	public static LocalDate getDate(String token, String scheduleStartDate) throws TokenValidationFailedException {
+	/**
+	 * This method accepts a string as input 
+	 * parses the string to get a LocalDate
+	 * throws InvalidDateException for invalid date format in the input string
+	 * 
+	 * @param scheduleStartDate
+	 * @return localDate
+	 * @throws InvalidDateException
+	 */
+	public static LocalDate getDate(String scheduleStartDate) throws InvalidDateException {
+
 		LocalDate localDate = null;
 		try {
 
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH);
+			log.info("Start");
+
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH);
 			localDate = LocalDate.parse(scheduleStartDate, formatter);
 
-			log.debug("date : {}", localDate);
+			log.debug("localDate : {}", localDate);
 
 		} catch (Exception e) {
-			log.debug("Date Format Exception");
+			log.error("Date Format Exception");
+			throw new InvalidDateException("Invalid Date");
 		}
+
+		log.info("End");
 
 		return localDate;
 	}

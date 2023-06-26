@@ -1,41 +1,56 @@
 package com.cognizant.medicalrepresentativeschedule.util;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.util.ResourceUtils;
-
-import com.cognizant.medicalrepresentativeschedule.exception.TokenValidationFailedException;
 import com.cognizant.medicalrepresentativeschedule.model.Doctor;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This class contain method related to csv files
+ * 
+ */
 @Slf4j
 public class CsvParseUtil {
 
-	
-	public static List<Doctor> parseDoctors(String token) throws TokenValidationFailedException {
+	/**
+	 * This method parses the Doctor.csv file
+	 * maps each entry with the members of doctor model
+	 * and returns the list of doctors
+	 */
+	public static List<Doctor> parseDoctors() {
+		log.info("Start");
 
 		final List<Doctor> doctors = new ArrayList<>();
+		
+		ClassLoader classLoader = CsvParseUtil.class.getClassLoader();
+		
+		InputStream in = classLoader.getResourceAsStream("Doctor.csv");
 
-		try (BufferedReader br = new BufferedReader(new FileReader(ResourceUtils.getFile("classpath:Doctor.csv")))) {
+		try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in))) {
 
 			String line = null;
+			line = bufferedReader.readLine();
 
-			while ((line = br.readLine()) != null) {
+			while (line != null) {
 				String[] entry = line.split(",");
 
 				Doctor doctor = new Doctor(Integer.parseInt(entry[0]), entry[1], entry[2], entry[3]);
 
 				doctors.add(doctor);
+				line = bufferedReader.readLine();
 			}
 
 		} catch (IOException e) {
 			log.error("File not found");
 		}
+
+		log.debug("doctors : {}", doctors);
 
 		log.info("End");
 
