@@ -8,7 +8,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.3.9.RELEASE</version>
-		<relativePath /> 
+		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
 	<groupId>com.cognizant</groupId>
@@ -60,13 +60,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-junit</artifactId>
-			<version>2.0.0.0</version>
-			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 
@@ -96,10 +95,7 @@
 					</excludes>
 				</configuration>
 			</plugin>
-
-		
 		</plugins>
-		<finalName>medicalrepscheduleservice</finalName>
 	</build>
 
 </project>
