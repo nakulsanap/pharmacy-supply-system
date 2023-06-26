@@ -1,0 +1,29 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      docker: 18
+      java: corretto8
+  pre_build:
+    commands:
+      - echo "Entered the ore-build phase"
+      - $( aws ecr get-login --no-include-email --region $AWS_REGION)
+      - java -version
+      - mvn -vesion
+  build:
+    commands:
+      - echo "Entered build phase"
+      - cd portal
+      - mvn clean install
+      - echo "Building docker image"
+      - docker build -t portalservice:latest .
+      - docker tag portalservice:latest 690236230744.dkr.ecr.us-east-2.amazonaws.com/pod4-portalservice:portal-service
+  post_build:
+    commands:
+      - echo "Entered post build phase"
+      - docker push 690236230744.dkr.ecr.us-east-2.amazonaws.com/pod4-portalservice:portal-service
+      - printf '[{"name":"portalservice-container", "imageUri":"%s"}]' 690236230744.dkr.ecr.us-east-2.amazonaws.com/pod4-portalservice:portal-service > taskdefinition.json
+artifacts:
+  files:
+    - portal/taskdefinition.json
